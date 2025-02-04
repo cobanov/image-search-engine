@@ -10,7 +10,7 @@ class FeatureExtractor:
     def __init__(self, modelname):
         # Load the pre-trained model
         self.model = timm.create_model(
-            modelname, pretrained=True, num_classes=0, global_pool="avg"
+            modelname, pretrained=True, num_classes=0
         )
         self.model.eval()
 
