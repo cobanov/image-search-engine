@@ -9,9 +9,8 @@ from tqdm import tqdm
 import db_utils
 import utils
 from batch_encoder import BatchFeatureExtractor, ImageDataset
-from encoder import FeatureExtractor
 
-config = utils.load_config("./configs/animals.yml")
+config = utils.load_config("./configs/animals_resnet50.yml")
 
 COLLECTION_NAME = config["COLLECTION_NAME"]
 LANCE_DB_PATH = config["LANCEDB"]
@@ -20,29 +19,14 @@ MODEL_DIM = config["MODEL_DIM"]
 DATASET_PATH = config["DATASET_PATH"]
 
 
-image_encoder = FeatureExtractor(MODEL_NAME)
-
-
 db = db_utils.get_lancedb_client(LANCE_DB_PATH)
-table = db_utils.open_table(db, COLLECTION_NAME)
+table = db_utils.create_table(db, COLLECTION_NAME, dim=MODEL_DIM)
+# table = db_utils.open_table(db, COLLECTION_NAME)
 
 
 image_paths = glob(os.path.join(DATASET_PATH, "**/*.JPEG"))
 print(f"Found {len(image_paths)} images")
 
-
-# # Sinle Image Embedding
-# for i, filepath in enumerate(tqdm(image_paths, desc="Generating embeddings ...")):
-#     try:
-#         image_embedding = image_encoder(filepath)
-#         data = [{"vector": image_embedding, "filepath": filepath}]
-#         table.add(data)
-
-#     except Exception as e:
-#         print(
-#             f"Skipping file: {filepath} due to an error occurs during the embedding process:\n{e}"
-#         )
-#         continue
 
 extractor = BatchFeatureExtractor(MODEL_NAME, batch_size=256, num_workers=0)
 
