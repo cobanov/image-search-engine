@@ -34,5 +34,10 @@ def open_table(db, table_name):
     return db.open_table(table_name)
 
 
+def add_data(table, data):
+    """Adds data to the table."""
+    table.append(pa.Table.from_pydict(data))
+
+
 def get_search_results(table, query):
     return table.search(query)
