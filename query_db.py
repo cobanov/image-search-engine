@@ -2,7 +2,7 @@ import db_utils
 import utils
 from encoder import FeatureExtractor
 
-config = utils.load_config("./configs/animals.yml")
+config = utils.load_config("./configs/animals_siglip.yml")
 
 COLLECTION_NAME = config["COLLECTION_NAME"]
 LANCE_DB_PATH = config["LANCEDB"]
@@ -18,9 +18,10 @@ table.create_index("l2", vector_column_name="vector")
 
 extractor = FeatureExtractor(MODEL_NAME)
 
-image = "./dataset/reverse_image_search/train/ambulance/n02701002_18950.JPEG"
+image = "./dataset/reverse_image_search/train/bannister/n02788148_10587.JPEG"
 query = extractor(image)
 result = table.search(query)
 
 df = result.to_pandas()
-df.to_csv("result.csv", index=False)
+df.drop(columns=["vector"], inplace=True)
+df.to_csv("results/result.csv", index=False)
