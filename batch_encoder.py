@@ -1,13 +1,10 @@
-import os
 
-import numpy as np
 import timm
 import torch
 from PIL import Image
-from sklearn.preprocessing import normalize
 from timm.data import resolve_data_config
 from timm.data.transforms_factory import create_transform
-from torch.utils.data import DataLoader, Dataset
+from torch.utils.data import Dataset
 
 
 class ImageDataset(Dataset):

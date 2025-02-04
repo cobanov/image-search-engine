@@ -1,10 +1,9 @@
 import os
 from glob import glob
 
-import numpy as np
 import torch
 from sklearn.preprocessing import normalize
-from torch.utils.data import DataLoader, Dataset
+from torch.utils.data import DataLoader
 from tqdm import tqdm
 
 import db_utils
