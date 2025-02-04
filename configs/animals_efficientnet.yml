@@ -1,0 +1,6 @@
+COLLECTION_NAME: ANIMALS_efficientnet_b0
+LANCEDB: "./db/efficientnet_b0.db"
+LANCE_DB_TOKEN: "example"
+MODEL_NAME: efficientnet_b0.ra_in1k
+MODEL_DIM: 1280
+DATASET_PATH: "./dataset/reverse_image_search/train"

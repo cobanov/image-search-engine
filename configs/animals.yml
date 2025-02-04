@@ -1,6 +1,0 @@
-COLLECTION_NAME: ANIMALS
-LANCEDB: "./db/example.db"
-LANCE_DB_TOKEN: "example"
-MODEL_NAME: resnet50
-MODEL_DIM: 2048
-DATASET_PATH: "./dataset/reverse_image_search/train"
