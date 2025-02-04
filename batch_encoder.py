@@ -1,4 +1,3 @@
-
 import timm
 import torch
 from PIL import Image
@@ -36,11 +35,10 @@ class BatchFeatureExtractor:
         print(f"📦 Batch size: {self.batch_size}")
 
         # Load the pre-trained model and move to GPU
-        self.model = timm.create_model(
-            modelname, pretrained=True, num_classes=0, global_pool="avg"
-        ).to(self.device)
+        self.model = timm.create_model(modelname, pretrained=True, num_classes=0).to(
+            self.device
+        )
         self.model.eval()
 
-        # Get the preprocessing function provided by TIMM for the model
-        config = resolve_data_config({}, model=modelname)
-        self.preprocess = create_transform(**config)
+        config = timm.data.resolve_model_data_config(model=modelname)
+        self.preprocess = timm.data.create_transform(**config, is_training=False)
