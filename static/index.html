@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Semantic Search Engine</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Smooch+Sans&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Semantic Search Engine</h1>
+
+      <div id="drop-zone" class="drop-zone">
+        <div class="drop-zone-content">
+          <p>Drag and drop an image here</p>
+          <p>or</p>
+          <button id="upload-btn">Select File</button>
+          <input type="file" id="file-input" accept="image/*" hidden />
+        </div>
+        <img id="preview-image" class="preview-image" hidden />
+        <button id="clear-btn" class="clear-btn" style="display: none">
+          ×
+        </button>
+      </div>
+
+      <div id="results-grid" class="results-grid"></div>
+
+      <div id="metadata-panel" class="metadata-panel">
+        <button class="close-metadata">×</button>
+        <div class="metadata-content">
+          <img class="metadata-image" alt="Selected image" />
+          <div class="metadata-info">
+            <h2>Image Details</h2>
+            <div class="metadata-row">
+              <span class="label">Scientific Name</span>
+              <span class="scientific-name"></span>
+            </div>
+            <div class="metadata-row">
+              <span class="label">Common Name</span>
+              <span class="common-name"></span>
+            </div>
+            <div class="metadata-row">
+              <span class="label">Similarity Score</span>
+              <span class="score-value"></span>
+            </div>
+            <div class="metadata-row generate-section">
+              <button id="generate-btn" class="generate-btn">Ask to LNM</button>
+              <div id="generated-text" class="generated-text"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="loading" class="loading" style="display: none">
+        <div class="spinner"></div>
+        <p>Searching for similar images...</p>
+      </div>
+    </div>
+
+    <script>
+      const dropZone = document.getElementById("drop-zone");
+      const fileInput = document.getElementById("file-input");
+      const uploadBtn = document.getElementById("upload-btn");
+      const previewImage = document.getElementById("preview-image");
+      const resultsGrid = document.getElementById("results-grid");
+      const loading = document.getElementById("loading");
+      const clearBtn = document.getElementById("clear-btn");
+      const metadataPanel = document.getElementById("metadata-panel");
+      const closeMetadataBtn = document.querySelector(".close-metadata");
+
+      // Close metadata panel when clicking the close button
+      closeMetadataBtn.addEventListener("click", () => {
+        metadataPanel.classList.remove("active");
+      });
+
+      // Close metadata panel when clicking outside
+      document.addEventListener("click", (e) => {
+        if (
+          !metadataPanel.contains(e.target) &&
+          !e.target.closest(".result-item")
+        ) {
+          metadataPanel.classList.remove("active");
+        }
+      });
+
+      // Prevent default drag behaviors
+      ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
+        dropZone.addEventListener(eventName, preventDefaults, false);
+        document.body.addEventListener(eventName, preventDefaults, false);
+      });
+
+      // Highlight drop zone when dragging over it
+      ["dragenter", "dragover"].forEach((eventName) => {
+        dropZone.addEventListener(eventName, highlight, false);
+      });
+
+      ["dragleave", "drop"].forEach((eventName) => {
+        dropZone.addEventListener(eventName, unhighlight, false);
+      });
+
+      // Handle dropped files
+      dropZone.addEventListener("drop", handleDrop, false);
+
+      // Handle file input change
+      fileInput.addEventListener("change", handleFiles, false);
+
+      // Handle upload button click
+      uploadBtn.addEventListener("click", () => fileInput.click());
+
+      // Handle clear button click
+      clearBtn.addEventListener("click", clearDropZone);
+
+      function clearDropZone() {
+        previewImage.hidden = true;
+        previewImage.src = "";
+        dropZone.classList.remove("has-preview");
+        clearBtn.style.display = "none";
+        fileInput.value = "";
+      }
+
+      function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+
+      function highlight(e) {
+        dropZone.classList.add("highlight");
+      }
+
+      function unhighlight(e) {
+        dropZone.classList.remove("highlight");
+      }
+
+      function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        handleFiles({ target: { files: files } });
+      }
+
+      function showMetadata(imageElement, metadata) {
+        const metadataImage = metadataPanel.querySelector(".metadata-image");
+        const scientificName = metadataPanel.querySelector(".scientific-name");
+        const commonName = metadataPanel.querySelector(".common-name");
+        const scoreValue = metadataPanel.querySelector(".score-value");
+        const generateBtn = metadataPanel.querySelector("#generate-btn");
+        const generatedText = metadataPanel.querySelector("#generated-text");
+
+        metadataImage.src = metadata.filepath;
+        scientificName.textContent =
+          metadata.scientific_name || "Not available";
+        commonName.textContent = metadata.common_name || "Not available";
+        scoreValue.textContent = metadata.score.toFixed(3);
+        generatedText.textContent = ""; // Clear previous text
+
+        // Reset and add new click handler for generate button
+        generateBtn.onclick = () => {
+          generateBtn.disabled = true;
+          const scientificNameText =
+            metadata.scientific_name || "Species incognita";
+          const text = `${scientificNameText}
+
+${scientificNameText}, vulgo iaguara, est species mammalis familiae Felidarum, quae in America Meridionali et Centrali invenitur. Hoc animal robustum et musculis validis praeditum est, pellis aurea cum maculis nigris, quae in rosis dispositis apparent, insignitur. ${scientificNameText} inter maximos predatores regionis silvarum pluvialium numeratur et solum inter Felidae facultatem aquas libenter frequentandi habet, ubi praedas sicut pisces et caimanos captat. Maxillae fortissimae sunt, quod illi permittit etiam testudinum durissima tegmina frangere. In cultura indigena, ${scientificNameText} saepe symbolum potentiae et sapientiae mysticae consideratur.`;
+
+          typeText(generatedText, text, () => {
+            generateBtn.disabled = false;
+          });
+        };
+
+        metadataPanel.classList.add("active");
+      }
+
+      function typeText(element, text, onComplete, speed = 100) {
+        const words = text.split(" ");
+        let index = 0;
+        element.textContent = "";
+
+        function type() {
+          if (index < words.length) {
+            // Add a space before each word except the first one
+            if (index > 0) {
+              element.textContent += " ";
+            }
+            element.textContent += words[index];
+            index++;
+            setTimeout(type, speed);
+          } else if (onComplete) {
+            onComplete();
+          }
+        }
+
+        type();
+      }
+
+      function handleFiles(e) {
+        const file = e.target.files[0];
+        if (file && file.type.startsWith("image/")) {
+          // Show preview
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            previewImage.src = e.target.result;
+            previewImage.hidden = false;
+            dropZone.classList.add("has-preview");
+            clearBtn.style.display = "block";
+          };
+          reader.readAsDataURL(file);
+
+          // Upload and search
+          uploadAndSearch(file);
+        }
+      }
+
+      async function uploadAndSearch(file) {
+        loading.style.display = "flex";
+        resultsGrid.innerHTML = "";
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        try {
+          const response = await fetch("/search/image", {
+            method: "POST",
+            body: formData,
+          });
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const data = await response.json();
+
+          // Display results
+          resultsGrid.innerHTML = data.results
+            .map(
+              (result) => `
+                <div class="result-item" data-metadata='${JSON.stringify(
+                  result
+                )}'>
+                  <img src="${result.filepath}" alt="Similar image">
+                  <div class="score">Score: ${result.score.toFixed(3)}</div>
+                </div>
+              `
+            )
+            .join("");
+
+          // Add click handlers to result items
+          document.querySelectorAll(".result-item").forEach((item) => {
+            item.addEventListener("click", function () {
+              const metadata = JSON.parse(this.dataset.metadata);
+              showMetadata(this.querySelector("img"), metadata);
+            });
+          });
+        } catch (error) {
+          console.error("Error:", error);
+          alert("An error occurred while searching for similar images.");
+        } finally {
+          loading.style.display = "none";
+        }
+      }
+    </script>
+  </body>
+</html>
