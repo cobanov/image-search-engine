@@ -2,7 +2,7 @@
 
 A modern, fast, and efficient semantic image search engine built with FastAPI, PyTorch, and LanceDB. This application allows users to search for similar images using either image queries through an elegant web interface.
 
-![Demo Screenshot Placeholder]
+![assets/demo.png](assets/demo.png)
 
 ## Features ✨
 
@@ -19,7 +19,7 @@ A modern, fast, and efficient semantic image search engine built with FastAPI, P
 - **Backend**: FastAPI, PyTorch, timm
 - **Frontend**: HTML5, CSS3, Vanilla JavaScript
 - **Database**: LanceDB
-- **Models**: ResNet50, MobileNetV3 (configurable)
+- **Models**: ResNet50, EfficientNet, MobileNetV3 (configurable)
 - **Image Processing**: Pillow, scikit-learn
 
 ## Installation 🚀
@@ -39,53 +39,71 @@ pip install -r requirements.txt
 
 3. Configure your settings:
 
-- Copy `configs/ocean_resnet50.yml.example` to `configs/ocean_resnet50.yml`
+- Choose or create a configuration file in `configs/` directory
 - Update the configuration with your settings:
   ```yaml
   COLLECTION_NAME: your_collection_name
   LANCEDB: "./db/your_db.lance"
-  MODEL_NAME: "resnet50.a1_in1k"
+  MODEL_NAME: "resnet50.a1_in1k" # or other supported models
   MODEL_DIM: 2048
   DATASET_PATH: "./your_dataset_path"
   ```
 
 ## Usage 💡
 
-1. Ingest your images into the database:
+1. Prepare your dataset:
+
+- Place your images in the `dataset/` directory
+- Ensure proper metadata format for scientific and common names
+
+2. Ingest your images into the database:
 
 ```bash
 python ingest.py
 ```
 
-2. Start the server:
+3. Start the server:
 
 ```bash
 python app.py
 ```
 
-3. Open your browser and navigate to `http://localhost:8000`
+4. Open your browser and navigate to `http://localhost:8000`
 
 ## Project Structure 📁
 
 ```
 image-search-engine/
-├── app.py              # FastAPI application
-├── ingest.py           # Image ingestion script
-├── encoder.py          # Feature extraction
-├── db_utils.py         # Database utilities
-├── configs/            # Configuration files
-├── static/             # Web interface files
+├── app.py                    # FastAPI application
+├── ingest.py                 # Image ingestion script
+├── query_db.py              # Database query utilities
+├── encoder.py               # Feature extraction
+├── batch_encoder.py         # Batch processing for encoders
+├── db_utils.py              # Database utilities
+├── utils.py                 # General utilities
+├── configs/                 # Configuration files
+│   ├── ocean_resnet50.yml
+│   ├── ocean_resnet50_v2.yml
+│   ├── animals_resnet50.yml
+│   ├── animals_efficientnet.yml
+│   └── animals_mobilenetv3.yml
+├── static/                  # Web interface files
 │   ├── index.html
 │   └── style.css
-└── dataset/           # Your image dataset
+├── dataset/                 # Your image dataset
+├── db/                      # LanceDB database files
+├── results/                 # Search results
+└── requirements.txt         # Python dependencies
 ```
 
 ## Configuration ⚙️
 
 The application supports multiple configuration files in the `configs/` directory:
 
-- `ocean_resnet50.yml`: ResNet50 configuration
-- `animals_resnet50.yml`: Alternative ResNet50 configuration
+- `ocean_resnet50.yml`: ResNet50 configuration for ocean dataset
+- `ocean_resnet50_v2.yml`: Updated ResNet50 configuration
+- `animals_resnet50.yml`: ResNet50 for animal dataset
+- `animals_efficientnet.yml`: EfficientNet configuration
 - `animals_mobilenetv3.yml`: MobileNetV3 configuration
 
 Each configuration file specifies:
