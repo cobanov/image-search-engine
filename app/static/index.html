@@ -11,6 +11,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="/static/style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   </head>
   <body>
     <div class="container">
@@ -159,34 +160,66 @@
         generatedText.textContent = ""; // Clear previous text
 
         // Reset and add new click handler for generate button
-        generateBtn.onclick = () => {
+        generateBtn.onclick = async () => {
           generateBtn.disabled = true;
-          const scientificNameText =
-            metadata.scientific_name || "Species incognita";
-          const text = `${scientificNameText}
+          generatedText.textContent = "Generating description..."; // Show loading state
 
-${scientificNameText}, vulgo iaguara, est species mammalis familiae Felidarum, quae in America Meridionali et Centrali invenitur. Hoc animal robustum et musculis validis praeditum est, pellis aurea cum maculis nigris, quae in rosis dispositis apparent, insignitur. ${scientificNameText} inter maximos predatores regionis silvarum pluvialium numeratur et solum inter Felidae facultatem aquas libenter frequentandi habet, ubi praedas sicut pisces et caimanos captat. Maxillae fortissimae sunt, quod illi permittit etiam testudinum durissima tegmina frangere. In cultura indigena, ${scientificNameText} saepe symbolum potentiae et sapientiae mysticae consideratur.`;
+          try {
+            const formData = new FormData();
+            formData.append(
+              "scientific_name",
+              metadata.scientific_name || "Unknown species"
+            );
+            formData.append("common_name", metadata.common_name || "Unknown");
 
-          typeText(generatedText, text, () => {
+            const response = await fetch("/research", {
+              method: "POST",
+              body: formData,
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+              throw new Error(
+                data.detail || `HTTP error! status: ${response.status}`
+              );
+            }
+
+            if (!data.result) {
+              throw new Error("No result received from the server");
+            }
+
+            generatedText.textContent = ""; // Clear loading message
+            typeText(generatedText, data.result, () => {
+              generateBtn.disabled = false;
+            });
+          } catch (error) {
+            console.error("Error details:", error);
+            generatedText.textContent = `Error: ${
+              error.message ||
+              "An error occurred while generating the description."
+            }`;
             generateBtn.disabled = false;
-          });
+          }
         };
 
         metadataPanel.classList.add("active");
       }
 
-      function typeText(element, text, onComplete, speed = 100) {
+      function typeText(element, text, onComplete, speed = 20) {
         const words = text.split(" ");
         let index = 0;
-        element.textContent = "";
+        let markdownContent = "";
 
         function type() {
           if (index < words.length) {
             // Add a space before each word except the first one
             if (index > 0) {
-              element.textContent += " ";
+              markdownContent += " ";
             }
-            element.textContent += words[index];
+            markdownContent += words[index];
+            // Parse markdown and set HTML content
+            element.innerHTML = marked.parse(markdownContent);
             index++;
             setTimeout(type, speed);
           } else if (onComplete) {
