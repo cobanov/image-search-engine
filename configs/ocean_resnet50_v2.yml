@@ -4,3 +4,4 @@ LANCE_DB_TOKEN: "example"
 MODEL_NAME: resnet50.a1_in1k
 MODEL_DIM: 2048
 DATASET_PATH: "./dataset/ocean/224_cc"
+RESEARCH_COLLECTION: "research_cache"
