@@ -1,0 +1,22 @@
+research_task:
+  description: >
+    Conduct a comprehensive scientific analysis about {topic} in natural systems.
+    Focus areas should include:
+    - Species classification and characteristics
+    - Ecological role and interactions
+    - Geographic distribution
+    - Conservation status (if applicable)
+    - Recent scientific discoveries
+    - Environmental impact and adaptation
+    Make sure to include recent scientific findings from 2023-2024 where relevant.
+  expected_output: >
+    A detailed scientific report containing:
+    - Taxonomic classification
+    - Key characteristics and features
+    - Ecological significance
+    - Distribution and habitat information
+    - Conservation status and threats (if applicable)
+    - Recent research findings
+    - Notable interactions with other species
+    - References to recent scientific literature
+  agent: researcher
