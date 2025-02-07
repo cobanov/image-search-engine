@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
-import db_utils
+import engine.db_utils as db_utils
 from app.config import (
     LANCE_DB_PATH,
     COLLECTION_NAME,
@@ -19,7 +19,7 @@ from app.config import (
 from app.models import SearchResponse
 from app.services.research_service import get_research
 from app.services.search_service import search_images
-from encoder import FeatureExtractor
+from engine.encoder import FeatureExtractor
 
 load_dotenv()
 

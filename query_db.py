@@ -1,6 +1,6 @@
-import db_utils
+import engine.db_utils as db_utils
 import utils
-from encoder import FeatureExtractor
+from engine.encoder import FeatureExtractor
 
 config = utils.load_config("./configs/animals_siglip.yml")
 

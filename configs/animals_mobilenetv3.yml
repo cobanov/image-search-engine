@@ -1,5 +1,5 @@
 COLLECTION_NAME: ANIMALS_MOBILENETV3
-LANCEDB: "./db/mobiletnetv3.db"
+LANCEDB: "./vectordb/mobiletnetv3.db"
 LANCE_DB_TOKEN: "example"
 MODEL_NAME: mobilenetv3_small_100.lamb_in1k
 MODEL_DIM: 1024

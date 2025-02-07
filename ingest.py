@@ -6,9 +6,9 @@ from sklearn.preprocessing import normalize
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
-import db_utils
+import engine.db_utils as db_utils
 import utils
-from batch_encoder import BatchFeatureExtractor, ImageDataset
+from engine.batch_encoder import BatchFeatureExtractor, ImageDataset
 
 config = utils.load_config("./configs/ocean_resnet50_v2.yml")
 

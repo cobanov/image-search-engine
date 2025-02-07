@@ -1,5 +1,5 @@
 COLLECTION_NAME: ANIMALS_RESNET50
-LANCEDB: "./db/resnet50.db"
+LANCEDB: "./vectordb/resnet50.db"
 LANCE_DB_TOKEN: "example"
 MODEL_NAME: resnet50.a1_in1k
 MODEL_DIM: 2048
