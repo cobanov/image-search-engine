@@ -38,14 +38,6 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-4. Create a `.env` file in the root directory with your configuration:
-
-```env
-DATASET_PATH=./dataset
-LANCEDB_PATH=./vectordb
-MODEL_NAME=resnet50
-```
-
 ## Usage
 
 ### 1. Image Ingestion
