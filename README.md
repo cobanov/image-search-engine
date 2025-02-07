@@ -1,28 +1,22 @@
-# Semantic Image Search Engine 🔍
+# Image Search Engine 🔍
 
-A modern, fast, and efficient semantic image search engine built with FastAPI, PyTorch, and LanceDB. This application allows users to search for similar images using either image queries through an elegant web interface.
+A powerful and efficient image search engine that uses deep learning to find similar images based on their visual content. This project combines state-of-the-art neural networks with vector database technology to enable fast and accurate image similarity search.
 
 ![assets/demo.png](assets/demo.png)
 
-## Features ✨
+## Features
 
-- **Drag & Drop Interface**: Simple and intuitive image upload
-- **Real-time Search**: Fast similarity search using state-of-the-art models
-- **Responsive Design**: Works seamlessly on desktop and mobile devices
-- **Metadata Display**: View detailed information about each image
-- **Latin Name Generator**: Generate Latin descriptions for matched images
-- **Vector Database**: Efficient similarity search using LanceDB
-- **Multiple Model Support**: Configurable with different backbone models
+- **Multiple Model Support**: Compatible with various deep learning architectures:
+  - ResNet50
+  - EfficientNet
+  - MobileNetV3
+- **Vector Database Integration**: Uses LanceDB for efficient similarity search
+- **Batch Processing**: Optimized for processing large image datasets
+- **Web Interface**: User-friendly FastAPI-based web application
+- **Configurable**: Easy-to-modify YAML configuration files
+- **Multi-format Support**: Handles various image formats (JPEG, PNG, WebP)
 
-## Tech Stack 🛠️
-
-- **Backend**: FastAPI, PyTorch, timm
-- **Frontend**: HTML5, CSS3, Vanilla JavaScript
-- **Database**: LanceDB
-- **Models**: ResNet50, EfficientNet, MobileNetV3 (configurable)
-- **Image Processing**: Pillow, scikit-learn
-
-## Installation 🚀
+## Installation
 
 1. Clone the repository:
 
@@ -31,106 +25,107 @@ git clone https://github.com/yourusername/image-search-engine.git
 cd image-search-engine
 ```
 
-2. Install dependencies:
+2. Create a virtual environment (recommended):
+
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
+
+3. Install dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-3. Configure your settings:
+4. Create a `.env` file in the root directory with your configuration:
 
-- Choose or create a configuration file in `configs/` directory
-- Update the configuration with your settings:
-  ```yaml
-  COLLECTION_NAME: your_collection_name
-  LANCEDB: "./db/your_db.lance"
-  MODEL_NAME: "resnet50.a1_in1k" # or other supported models
-  MODEL_DIM: 2048
-  DATASET_PATH: "./your_dataset_path"
-  ```
+```env
+DATASET_PATH=./dataset
+LANCEDB_PATH=./vectordb
+MODEL_NAME=resnet50
+```
 
-## Usage 💡
+## Usage
 
-1. Prepare your dataset:
+### 1. Image Ingestion
 
-- Place your images in the `dataset/` directory
-- Ensure proper metadata format for scientific and common names
-
-2. Ingest your images into the database:
+To index your image dataset:
 
 ```bash
 python ingest.py
 ```
 
-3. Start the server:
+This will:
+
+- Scan your dataset directory for images
+- Extract features using the specified model
+- Store embeddings in the vector database
+
+### 2. Query Images
+
+To search for similar images:
 
 ```bash
-python app.py
+python query_db.py --image_path path/to/your/query/image.jpg
 ```
 
-4. Open your browser and navigate to `http://localhost:8000`
+### 3. Web Interface
 
-## Project Structure 📁
+Start the web application:
+
+```bash
+python -m uvicorn app.app:app --reload
+```
+
+Access the web interface at `http://localhost:8000`
+
+## 🔧 Configuration
+
+Configuration files are stored in the `configs/` directory. Available configurations:
+
+- `animals_efficientnet.yml`
+- `animals_mobilenetv3.yml`
+- `animals_resnet50.yml`
+- `ocean_resnet50.yml`
+- `ocean_resnet50_v2.yml`
+
+Example configuration:
+
+```yaml
+MODEL_NAME: resnet50
+MODEL_DIM: 2048
+COLLECTION_NAME: images
+DATASET_PATH: ./dataset
+LANCEDB: ./vectordb
+```
+
+## Project Structure
 
 ```
 image-search-engine/
-├── app.py                    # FastAPI application
-├── ingest.py                 # Image ingestion script
-├── query_db.py              # Database query utilities
-├── encoder.py               # Feature extraction
-├── batch_encoder.py         # Batch processing for encoders
-├── db_utils.py              # Database utilities
-├── utils.py                 # General utilities
-├── configs/                 # Configuration files
-│   ├── ocean_resnet50.yml
-│   ├── ocean_resnet50_v2.yml
-│   ├── animals_resnet50.yml
-│   ├── animals_efficientnet.yml
-│   └── animals_mobilenetv3.yml
-├── static/                  # Web interface files
-│   ├── index.html
-│   └── style.css
-├── dataset/                 # Your image dataset
-├── db/                      # LanceDB database files
-├── results/                 # Search results
-└── requirements.txt         # Python dependencies
+├── app/                    # Web application
+├── configs/                # Model configurations
+├── dataset/               # Image dataset directory
+├── engine/                # Core search engine components
+├── vectordb/              # Vector database storage
+├── ingest.py              # Dataset ingestion script
+├── query_db.py            # Image query script
+└── requirements.txt       # Project dependencies
 ```
 
-## Configuration ⚙️
+## How It Works
 
-The application supports multiple configuration files in the `configs/` directory:
+1. **Feature Extraction**: Deep learning models convert images into high-dimensional feature vectors
+2. **Vector Storage**: Features are normalized and stored in LanceDB
+3. **Similarity Search**: Query images are processed the same way and compared using cosine similarity
+4. **Result Ranking**: Most similar images are returned based on vector similarity
 
-- `ocean_resnet50.yml`: ResNet50 configuration for ocean dataset
-- `ocean_resnet50_v2.yml`: Updated ResNet50 configuration
-- `animals_resnet50.yml`: ResNet50 for animal dataset
-- `animals_efficientnet.yml`: EfficientNet configuration
-- `animals_mobilenetv3.yml`: MobileNetV3 configuration
-
-Each configuration file specifies:
-
-- Model architecture and dimensions
-- Database location and collection name
-- Dataset path
-
-## API Endpoints 🌐
-
-- `GET /`: Web interface
-- `POST /search/image`: Image similarity search
-  - Parameters:
-    - `file`: Image file (multipart/form-data)
-    - `limit`: Number of results (default: 25)
-
-## Contributing 🤝
+## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
-## License 📄
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Acknowledgments 🙏
-
-- [FastAPI](https://fastapi.tiangolo.com/)
-- [PyTorch](https://pytorch.org/)
-- [LanceDB](https://github.com/lancedb/lancedb)
-- [timm](https://github.com/rwightman/pytorch-image-models)
