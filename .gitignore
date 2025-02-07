@@ -173,6 +173,7 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 dataset/
-db/
+vectordb/
 redundant/
 results/
+*.db
