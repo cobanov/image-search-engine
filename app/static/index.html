@@ -17,17 +17,28 @@
     <div class="container">
       <h1>Semantic Search Engine</h1>
 
-      <div id="drop-zone" class="drop-zone">
-        <div class="drop-zone-content">
-          <p>Drag and drop an image here</p>
-          <p>or</p>
-          <button id="upload-btn">Select File</button>
-          <input type="file" id="file-input" accept="image/*" hidden />
+      <div class="search-container">
+        <div class="text-search">
+          <input type="text" id="text-search" placeholder="Search by text..." />
+          <button id="text-search-btn">Search</button>
         </div>
-        <img id="preview-image" class="preview-image" hidden />
-        <button id="clear-btn" class="clear-btn" style="display: none">
-          ×
-        </button>
+
+        <div class="separator">
+          <span>OR</span>
+        </div>
+
+        <div id="drop-zone" class="drop-zone">
+          <div class="drop-zone-content">
+            <p>Drag and drop an image here</p>
+            <p>or</p>
+            <button id="upload-btn">Select File</button>
+            <input type="file" id="file-input" accept="image/*" hidden />
+          </div>
+          <img id="preview-image" class="preview-image" hidden />
+          <button id="clear-btn" class="clear-btn" style="display: none">
+            ×
+          </button>
+        </div>
       </div>
 
       <div id="results-grid" class="results-grid"></div>
@@ -74,6 +85,8 @@
       const clearBtn = document.getElementById("clear-btn");
       const metadataPanel = document.getElementById("metadata-panel");
       const closeMetadataBtn = document.querySelector(".close-metadata");
+      const textSearchInput = document.getElementById("text-search");
+      const textSearchBtn = document.getElementById("text-search-btn");
 
       // Close metadata panel when clicking the close button
       closeMetadataBtn.addEventListener("click", () => {
@@ -116,6 +129,14 @@
 
       // Handle clear button click
       clearBtn.addEventListener("click", clearDropZone);
+
+      // Add text search functionality
+      textSearchBtn.addEventListener("click", handleTextSearch);
+      textSearchInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") {
+          handleTextSearch();
+        }
+      });
 
       function clearDropZone() {
         previewImage.hidden = true;
@@ -294,6 +315,62 @@
         } finally {
           loading.style.display = "none";
         }
+      }
+
+      async function handleTextSearch() {
+        const query = textSearchInput.value.trim();
+        if (!query) return;
+
+        // Show loading state
+        loading.style.display = "flex";
+        resultsGrid.innerHTML = "";
+
+        try {
+          const formData = new FormData();
+          formData.append("query", query);
+
+          const response = await fetch("/search/text", {
+            method: "POST",
+            body: formData,
+          });
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const data = await response.json();
+          displayResults(data.results);
+        } catch (error) {
+          console.error("Error:", error);
+          alert("An error occurred while searching. Please try again.");
+        } finally {
+          loading.style.display = "none";
+        }
+      }
+
+      function displayResults(results) {
+        resultsGrid.innerHTML = "";
+        results.forEach((result) => {
+          const resultItem = document.createElement("div");
+          resultItem.className = "result-item";
+
+          const img = document.createElement("img");
+          img.src = result.filepath;
+          img.alt = result.scientific_name || "Search result";
+
+          const score = document.createElement("div");
+          score.className = "score";
+          score.textContent = `Score: ${result.score.toFixed(3)}`;
+
+          resultItem.appendChild(img);
+          resultItem.appendChild(score);
+          resultsGrid.appendChild(resultItem);
+
+          // Add click handler for metadata panel
+          resultItem.addEventListener("click", () => {
+            showMetadata(img, result);
+          });
+        });
       }
     </script>
   </body>

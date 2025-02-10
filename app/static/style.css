@@ -186,6 +186,11 @@ h1:hover::after {
   border-radius: 4px;
   background-color: #111;
   cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.result-item:hover {
+  transform: scale(1.02);
 }
 
 .result-item img {
@@ -202,20 +207,24 @@ h1:hover::after {
 .result-item .score {
   position: absolute;
   bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: rgba(0, 0, 0, 0.5);
-  padding: 0.2rem 0.8rem;
-  font-size: 1.2rem;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  padding: 4px 12px;
+  font-size: 1.1rem;
   text-align: center;
-  border-radius: 4px 4px 0 0;
   backdrop-filter: blur(4px);
+  border-radius: 1px;
   white-space: nowrap;
-  opacity: 0.7;
+  opacity: 0.3;
   z-index: 2;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  transform: none;
 }
 
 .result-item:hover .score {
+  background-color: rgba(0, 0, 0, 0.9);
   opacity: 1;
 }
 
@@ -589,4 +598,79 @@ h1:hover::after {
     height: 40px;
     font-size: 28px;
   }
+}
+
+.search-container {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.text-search {
+  display: flex;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.text-search input {
+  flex: 1;
+  padding: 0.8rem 1rem;
+  font-size: 1rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  color: #fff;
+  transition: all 0.3s ease;
+}
+
+.text-search input:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.6);
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.text-search input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.text-search button {
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  background-color: transparent;
+  border: 1px solid #fff;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.text-search button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 2px 10px rgba(255, 255, 255, 0.1);
+}
+
+.separator {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 1rem 0;
+}
+
+.separator::before,
+.separator::after {
+  content: "";
+  flex: 1;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.separator span {
+  margin: 0 1rem;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
 }
