@@ -20,6 +20,7 @@ from app.models import SearchResponse
 from app.services.research_service import get_research
 from app.services.search_service import search_images
 from engine.encoder import FeatureExtractor
+from engine.batch_encoder import CLIPBatchFeatureExtractor
 
 load_dotenv()
 
@@ -45,8 +46,8 @@ app.mount("/static", StaticFiles(directory="app/static"), name="static")
 # Mount the dataset directory
 app.mount("/images", StaticFiles(directory=DATASET_PATH), name="images")
 
-# Initialize feature extractor
-extractor = FeatureExtractor(MODEL_NAME)
+# Initialize CLIP extractor for both image and text search
+clip_extractor = CLIPBatchFeatureExtractor()
 
 # Connect to LanceDB
 db = db_utils.get_lancedb_client(LANCE_DB_PATH)
@@ -68,7 +69,31 @@ async def research(scientific_name: str = Form(...), common_name: str = Form(...
 async def search_by_image(
     file: UploadFile = File(...), limit: int = 25
 ):  # Changed limit to 25 for 5x5 grid
-    return await search_images(file, limit, table, extractor)
+    return await search_images(file, limit, table, clip_extractor)
+
+
+@app.post("/search/text", response_model=SearchResponse)
+async def search_by_text(query: str = Form(...), limit: int = 25):
+    """Search images using text query with CLIP"""
+    # Encode the text query
+    text_features = clip_extractor.encode_text([query])
+
+    # Search the database using the text features
+    results = table.search(text_features[0].numpy()).limit(limit).to_list()
+
+    # Format results
+    search_results = []
+    for result in results:
+        search_results.append(
+            {
+                "filepath": f"/images/{result['id']}",
+                "score": float(result.get("_distance", result.get("score", 0.0))),
+                "scientific_name": result.get("scientific_name", ""),
+                "common_name": result.get("common_name", ""),
+            }
+        )
+
+    return SearchResponse(results=search_results, total_results=len(search_results))
 
 
 if __name__ == "__main__":
