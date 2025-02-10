@@ -1,12 +1,11 @@
-import timm
-import torch
+from typing import List, Optional, Tuple
+
 import clip
-from PIL import Image
-from timm.data import resolve_data_config
-from timm.data.transforms_factory import create_transform
-from torch.utils.data import Dataset, DataLoader
-from typing import List, Tuple, Optional
+import torch
 import torch.nn.functional as F
+from PIL import Image
+
+from torch.utils.data import Dataset
 
 
 class ImageDataset(Dataset):
@@ -24,27 +23,27 @@ class ImageDataset(Dataset):
         return image, image_path
 
 
-class BatchFeatureExtractor:
-    def __init__(self, modelname, batch_size=64, num_workers=4, device=None):
-        self.device = (
-            device if device else ("cuda" if torch.cuda.is_available() else "cpu")
-        )
-        self.batch_size = batch_size
-        self.num_workers = num_workers  # Optimized num_workers
+# class BatchFeatureExtractor:
+#     def __init__(self, modelname, batch_size=64, num_workers=4, device=None):
+#         self.device = (
+#             device if device else ("cuda" if torch.cuda.is_available() else "cpu")
+#         )
+#         self.batch_size = batch_size
+#         self.num_workers = num_workers  # Optimized num_workers
 
-        # Print the settings when the module runs
-        print(f"🔥 Using device: {self.device.upper()}")
-        print(f"🛠 num_workers: {self.num_workers}")
-        print(f"📦 Batch size: {self.batch_size}")
+#         # Print the settings when the module runs
+#         print(f"🔥 Using device: {self.device.upper()}")
+#         print(f"🛠 num_workers: {self.num_workers}")
+#         print(f"📦 Batch size: {self.batch_size}")
 
-        # Load the pre-trained model and move to GPU
-        self.model = timm.create_model(modelname, pretrained=True, num_classes=0).to(
-            self.device
-        )
-        self.model.eval()
+#         # Load the pre-trained model and move to GPU
+#         self.model = timm.create_model(modelname, pretrained=True, num_classes=0).to(
+#             self.device
+#         )
+#         self.model.eval()
 
-        config = timm.data.resolve_model_data_config(model=modelname)
-        self.preprocess = timm.data.create_transform(**config, is_training=False)
+#         config = timm.data.resolve_model_data_config(model=modelname)
+#         self.preprocess = timm.data.create_transform(**config, is_training=False)
 
 
 class CLIPBatchFeatureExtractor:
