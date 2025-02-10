@@ -8,19 +8,13 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 import engine.db_utils as db_utils
-from app.config import (
-    LANCE_DB_PATH,
-    COLLECTION_NAME,
-    RESEARCH_COLLECTION,
-    MODEL_NAME,
-    MODEL_DIM,
-    DATASET_PATH,
-)
+from app.config import (COLLECTION_NAME, DATASET_PATH, LANCE_DB_PATH,
+                        MODEL_DIM, MODEL_NAME, RESEARCH_COLLECTION)
 from app.models import SearchResponse
 from app.services.research_service import get_research
 from app.services.search_service import search_images
-from engine.encoder import FeatureExtractor
 from engine.batch_encoder import CLIPBatchFeatureExtractor
+from engine.encoder import FeatureExtractor
 
 load_dotenv()
 
