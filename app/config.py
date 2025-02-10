@@ -1,7 +1,7 @@
 import utils
 
 # Load configuration
-config = utils.load_config("./configs/ocean_resnet50_v2.yml")
+config = utils.load_config("./configs/ocean_clip.yml")
 
 # VectorDB Configs
 LANCE_DB_PATH = config["LANCEDB"]

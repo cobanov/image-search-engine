@@ -3,9 +3,13 @@ uvicorn
 python-multipart
 pillow
 timm
+--index-url https://download.pytorch.org/whl/cu124
 torch
+torchvision
+torchaudio
 lancedb
 pydantic
 scikit-learn
 python-dotenv
 PyYAML
+git+https://github.com/openai/CLIP.git
