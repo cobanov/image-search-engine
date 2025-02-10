@@ -4,8 +4,8 @@ import os
 from fastapi import HTTPException, UploadFile
 from PIL import Image
 
-from app.models import SearchResponse, SearchResult
 from app.config import DATASET_PATH
+from app.models import SearchResponse, SearchResult
 
 
 async def search_images(
