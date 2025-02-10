@@ -1,0 +1,7 @@
+COLLECTION_NAME: OCEAN_CLIP
+LANCEDB: "./vectordb/ocean_clip.db"
+LANCE_DB_TOKEN: example
+MODEL_NAME: ViT-B/32
+MODEL_DIM: 512
+DATASET_PATH: "./dataset/ocean/224_cc"
+RESEARCH_COLLECTION: "research_cache"
