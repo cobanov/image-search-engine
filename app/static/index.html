@@ -183,7 +183,38 @@
         // Reset and add new click handler for generate button
         generateBtn.onclick = async () => {
           generateBtn.disabled = true;
-          generatedText.textContent = "Generating description..."; // Show loading state
+
+          // Create research steps
+          const researchSteps = [
+            { text: "Initializing research process", duration: 1000 },
+            { text: "Searching scientific databases", duration: 2000 },
+            { text: "Gathering recent publications", duration: 2000 },
+            { text: "Analyzing taxonomic information", duration: 1500 },
+            { text: "Investigating ecological relationships", duration: 2000 },
+            { text: "Mapping geographical distribution", duration: 1500 },
+            { text: "Evaluating conservation status", duration: 1500 },
+            { text: "Synthesizing information", duration: 2000 },
+            { text: "Generating comprehensive report", duration: 1500 },
+          ];
+
+          // Show initial loading state
+          generatedText.innerHTML = `<div class="research-steps"></div>`;
+          const stepsContainer = generatedText.querySelector(".research-steps");
+
+          // Create and animate research steps
+          for (const step of researchSteps) {
+            const stepElement = document.createElement("div");
+            stepElement.className = "research-step";
+            stepElement.innerHTML = `
+              <div class="step-icon"></div>
+              <span class="step-text">${step.text}</span>
+            `;
+            stepsContainer.appendChild(stepElement);
+
+            // Animate step
+            await new Promise((resolve) => setTimeout(resolve, step.duration));
+            stepElement.classList.add("completed");
+          }
 
           try {
             const formData = new FormData();
@@ -210,16 +241,17 @@
               throw new Error("No result received from the server");
             }
 
-            generatedText.textContent = ""; // Clear loading message
+            // Clear steps and show the result
+            generatedText.innerHTML = "";
             typeText(generatedText, data.result, () => {
               generateBtn.disabled = false;
             });
           } catch (error) {
             console.error("Error details:", error);
-            generatedText.textContent = `Error: ${
+            generatedText.innerHTML = `<div class="error-message">❌ Error: ${
               error.message ||
               "An error occurred while generating the description."
-            }`;
+            }</div>`;
             generateBtn.disabled = false;
           }
         };

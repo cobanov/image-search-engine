@@ -674,3 +674,195 @@ h1:hover::after {
   text-transform: uppercase;
   letter-spacing: 2px;
 }
+
+/* Research Steps Styles */
+.research-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 0.6rem;
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  position: relative;
+}
+
+.research-step {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.4rem 0.6rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 3px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0.4;
+  transform: translateX(-10px) scale(0.98);
+  position: relative;
+  min-height: 24px;
+}
+
+.research-step::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.research-step.completed {
+  opacity: 1;
+  transform: translateX(0) scale(1);
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.research-step.completed::before {
+  opacity: 1;
+}
+
+.step-icon {
+  position: relative;
+  min-width: 10px;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 50%;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+}
+
+.research-step.completed .step-icon {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.research-step.completed .step-icon::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+.step-text {
+  font-size: 0.7rem !important;
+  color: rgba(255, 255, 255, 0.5);
+  transition: all 0.3s ease;
+  font-weight: 400;
+  letter-spacing: 0.2px;
+  line-height: 1.2;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.research-step.completed .step-text {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.error-message {
+  color: #ff6b6b;
+  padding: 0.5rem 0.7rem;
+  background: rgba(255, 107, 107, 0.08);
+  border-radius: 3px;
+  border: 1px solid rgba(255, 107, 107, 0.15);
+  margin-top: 0.6rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 400;
+  font-size: 0.7rem !important;
+  animation: slideInError 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideInError {
+  from {
+    transform: translateY(-8px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Add progress line between steps */
+.research-steps::before {
+  content: "";
+  position: absolute;
+  left: 13px;
+  top: 0;
+  width: 1px;
+  height: 100%;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgba(255, 255, 255, 0.06) 10%,
+    rgba(255, 255, 255, 0.06) 90%,
+    transparent
+  );
+  z-index: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .research-step {
+    padding: 0.35rem 0.5rem;
+    min-height: 22px;
+  }
+
+  .step-icon {
+    min-width: 8px;
+    height: 8px;
+  }
+
+  .research-step.completed .step-icon::after {
+    width: 3px;
+    height: 3px;
+  }
+
+  .step-text {
+    font-size: 0.65rem !important;
+  }
+
+  .research-steps::before {
+    left: 12px;
+  }
+}
+
+/* Dark theme optimization */
+@media (prefers-color-scheme: dark) {
+  .research-step {
+    background: rgba(255, 255, 255, 0.01);
+  }
+
+  .research-step.completed {
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  .step-icon {
+    background: rgba(255, 255, 255, 0.02);
+  }
+}
