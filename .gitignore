@@ -177,3 +177,4 @@ vectordb/
 redundant/
 results/
 *.db
+*.ipynb
