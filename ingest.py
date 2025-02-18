@@ -35,10 +35,6 @@ db = db_utils.get_lancedb_client(LANCE_DB_PATH)
 print("\n📦 Creating main search table...")
 table = db_utils.create_table(db, COLLECTION_NAME, dim=MODEL_DIM)
 
-if RESEARCH_COLLECTION:
-    print("\n📦 Creating research cache table...")
-    research_table = db_utils.create_research_table(db, RESEARCH_COLLECTION, dim=MODEL_DIM)
-
 
 # Initialize CLIP extractor
 extractor = CLIPBatchFeatureExtractor(

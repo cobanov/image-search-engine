@@ -10,8 +10,8 @@ def sanitize_name(name: str) -> str:
     return "".join(c for c in name if c.isalnum() or c in (" ", "-", "_")).strip()
 
 
-async def get_research(research_table, scientific_name: str, common_name: str) -> dict:
-    """Get research results for a species, either from cache or by performing new research."""
+async def get_research(scientific_name: str, common_name: str) -> dict:
+    """Get research results for a species by performing new research."""
 
     # Sanitize input names
     safe_scientific = sanitize_name(scientific_name)
@@ -25,34 +25,9 @@ async def get_research(research_table, scientific_name: str, common_name: str) -
             detail="Both scientific and common names are required and must contain valid characters",
         )
 
-    # Check cache
-    cached_results = (
-        research_table.search()
-        .where(
-            f"scientific_name = '{safe_scientific}' AND common_name = '{safe_common}'"
-        )
-        .to_pandas()
-    )
-
-    if not cached_results.empty:
-        print("Found cached research result")
-        return {"result": cached_results.iloc[0]["result"]}
-
-    # Perform new research
-    print("No cache found, performing new research")
+    # Perform research
+    print("Performing research")
     result_text = await perform_research(safe_scientific, safe_common)
-
-    # Cache the result
-    research_table.add(
-        [
-            {
-                "scientific_name": safe_scientific,
-                "common_name": safe_common,
-                "result": result_text,
-                "vector": [0.0] * 512,  # Adding required vector field with dummy values
-            }
-        ]
-    )
 
     return {"result": result_text}
 

@@ -9,7 +9,7 @@ from fastapi.staticfiles import StaticFiles
 
 import engine.db_utils as db_utils
 from app.config import (COLLECTION_NAME, DATASET_PATH, LANCE_DB_PATH,
-                        MODEL_DIM, MODEL_NAME, RESEARCH_COLLECTION)
+                        MODEL_DIM, MODEL_NAME)
 from app.models import SearchResponse
 from app.services.research_service import get_research
 from app.services.search_service import search_images
@@ -46,7 +46,6 @@ clip_extractor = CLIPBatchFeatureExtractor()
 # Connect to LanceDB
 db = db_utils.get_lancedb_client(LANCE_DB_PATH)
 table = db_utils.open_table(db, COLLECTION_NAME)
-research_table = db_utils.open_table(db, RESEARCH_COLLECTION)
 
 
 @app.get("/")
@@ -56,7 +55,7 @@ async def root():
 
 @app.post("/research")
 async def research(scientific_name: str = Form(...), common_name: str = Form(...)):
-    return await get_research(research_table, scientific_name, common_name)
+    return await get_research(scientific_name, common_name)
 
 
 @app.post("/search/image", response_model=SearchResponse)
