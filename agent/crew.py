@@ -15,7 +15,7 @@ class LnmResearcher:
         return Agent(
             config=self.agents_config["researcher"],
             verbose=True,
-            tools=[SerperDevTool(n_results=2)],
+            tools=[SerperDevTool(n_results=4)],
         )
 
     @task
