@@ -36,7 +36,7 @@ async def get_research(research_table, scientific_name: str, common_name: str) -
 
     if not cached_results.empty:
         print("Found cached research result")
-        return {"result": cached_results.iloc[0]["research_result"]}
+        return {"result": cached_results.iloc[0]["result"]}
 
     # Perform new research
     print("No cache found, performing new research")
@@ -48,8 +48,8 @@ async def get_research(research_table, scientific_name: str, common_name: str) -
             {
                 "scientific_name": safe_scientific,
                 "common_name": safe_common,
-                "research_result": result_text,
-                "timestamp": datetime.now().isoformat(),
+                "result": result_text,
+                "vector": [0.0] * 512,  # Adding required vector field with dummy values
             }
         ]
     )
